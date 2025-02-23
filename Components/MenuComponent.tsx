@@ -1,5 +1,5 @@
-import React, { useRef, useEffect } from "react";
-import { View, Image, Text, Animated } from "react-native";
+import React, { useState, useRef, useEffect } from "react";
+import { View, Image, Text, Animated, TextInput, Keyboard, TouchableOpacity } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 type RootStackParamList = {
@@ -11,29 +11,33 @@ type RootStackParamList = {
 
 type MenuProps = NativeStackScreenProps<RootStackParamList, "Menu">;
 
-const Menu: React.FC<MenuProps> = ({ navigation }) => {
-  const translateX = useRef(new Animated.Value(300)).current; // Bắt đầu từ phải
+const Menu: React.FC<MenuProps> = ({ navigation, route }) => { 
+  const translateX = useRef(new Animated.Value(300)).current;
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     Animated.loop(
       Animated.timing(translateX, {
-        toValue: -200, // Chạy từ phải -> trái
-        duration: 5000, // Chạy chậm hơn
+        toValue: -200,
+        duration: 5000,
         useNativeDriver: true,
       })
     ).start();
   }, []);
 
-  const btnEasy_Clicked = () => {
-    navigation.navigate("Easy");
-  };
+  const handleSearchSubmit = () => {
+    const lowerCaseText = searchText.trim().toLowerCase();
 
-  const btnHard_Clicked = (type?: number) => {
-    navigation.navigate("Hard", { type: undefined });
-  };
-
-  const btnRules_Clicked = () => {
-    navigation.navigate("Rules");
+    if (lowerCaseText === "easy") {
+      Keyboard.dismiss();
+      navigation.navigate("Easy");
+    } else if (lowerCaseText === "hard") {
+      Keyboard.dismiss();
+      navigation.navigate("Hard", { type: undefined });
+    } else if (lowerCaseText === "rules") {
+      Keyboard.dismiss();
+      navigation.navigate("Rules");
+    }
   };
 
   return (
@@ -48,6 +52,21 @@ const Menu: React.FC<MenuProps> = ({ navigation }) => {
       >
         WHO IS THIS FOOTBALL PLAYER?
       </Text>
+
+      <TextInput
+        style={{
+          borderWidth: 1,
+          padding: 10,
+          marginBottom: 10,
+          borderRadius: 5,
+        }}
+        placeholder="Nhập 'easy', 'hard' hoặc 'rules' để vào phần mình mong muốn"
+        value={searchText}
+        onChangeText={setSearchText}
+        onSubmitEditing={handleSearchSubmit}
+        autoCapitalize="none"
+      />
+
       <View style={{ flex: 4 }}>
         <Image
           style={{
@@ -59,8 +78,9 @@ const Menu: React.FC<MenuProps> = ({ navigation }) => {
           source={require("../assets/images/footballQuiz.png")}
         />
       </View>
+
       <View style={{ flex: 4, marginTop: 50, alignItems: "center" }}>
-        <View style={{ flex: 1, justifyContent: "center" }}>
+        <TouchableOpacity onPress={() => navigation.navigate("Easy")} style={{ marginBottom: 20 }}>
           <Text
             style={{
               textAlign: "left",
@@ -68,12 +88,12 @@ const Menu: React.FC<MenuProps> = ({ navigation }) => {
               fontSize: 30,
               color: "#37C321",
             }}
-            onPress={btnEasy_Clicked}
           >
             EASY
           </Text>
-        </View>
-        <View style={{ flex: 1, justifyContent: "center" }}>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.navigate("Hard", { type: undefined })} style={{ marginBottom: 20 }}>
           <Text
             style={{
               textAlign: "left",
@@ -81,12 +101,12 @@ const Menu: React.FC<MenuProps> = ({ navigation }) => {
               fontSize: 30,
               color: "#C82424",
             }}
-            onPress={() => btnHard_Clicked()}
           >
             HARD
           </Text>
-        </View>
-        <View style={{ flex: 1, justifyContent: "center" }}>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.navigate("Rules")}>
           <Text
             style={{
               textAlign: "center",
@@ -94,12 +114,12 @@ const Menu: React.FC<MenuProps> = ({ navigation }) => {
               fontSize: 30,
               color: "black",
             }}
-            onPress={btnRules_Clicked}
           >
             RULES
           </Text>
-        </View>
+        </TouchableOpacity>
       </View>
+
       <View style={{ flex: 1 }}>
         <View style={{ height: 1, backgroundColor: "black" }} />
         <Animated.Text

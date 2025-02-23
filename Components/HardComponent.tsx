@@ -13,7 +13,7 @@ import {
 import { Icon } from "react-native-elements";
 import { players, Player } from "../shared/players";
 import { IMAGES } from "../shared/images";
-
+// mở rộng thêm làm lọc với category chọn cầu thủ từ menu 
 interface HardState {
   txtInput: string;
   imgHinh: any;
@@ -65,10 +65,11 @@ class Hard extends Component<{}, HardState> {
     }
   
     this.curNum += 1; 
+  
     if (this.curNum === 10) {
       this.setState((prevState) => ({
         ...prevState,
-        showResult: true, 
+        showResult: true,
       }), () => {
         Alert.alert(
           "Kết Quả",
@@ -85,6 +86,9 @@ class Hard extends Component<{}, HardState> {
       this.setState({ timeCounter: 60 });
     }
   };
+  
+  
+
   
 
   startTimer = (): void => {
@@ -103,8 +107,8 @@ class Hard extends Component<{}, HardState> {
   };
 
   handleAnswerSubmit = (text: string): void => {
-    if (this.curNum > 10) {
-      return;
+    if (this.curNum >= 10) {
+      return; 
     }
   
     let isCorrect = text.trim().toLowerCase() === this.curQuestion.correctOption.toLowerCase();
@@ -116,6 +120,7 @@ class Hard extends Component<{}, HardState> {
       this.callNextQuestionIfNeeded();
     });
   };
+  
   
   
 
